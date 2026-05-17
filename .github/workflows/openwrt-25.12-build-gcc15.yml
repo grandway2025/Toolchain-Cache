@@ -9,7 +9,6 @@ jobs:
   build:
     name: ${{ matrix.model }}-${{ matrix.libc }}-${{ matrix.tools }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 300
 
     defaults:
       run:
@@ -20,6 +19,9 @@ jobs:
       matrix:
         model:
           - x86_64
+          # - nanopi-r5s
+          # - netgear_r8500
+          # - redmi_ax6000
         tag:
           - type: dev
             version: openwrt-25.12
@@ -42,15 +44,13 @@ jobs:
         free -h
         df -Th
         uname -a
-
     - name: Set release env
       run: |
         sudo mkdir -p /builder
-        sudo chown -R runner:runner /builder
+        sudo chown -R runner.runner /builder
         echo 'WORKDIR=/builder' >> "$GITHUB_ENV"
-        git config --global user.name  'actions'
+        git config --global user.name 'actions'
         git config --global user.email 'action@github.com'
-
     - name: Free disk space
       uses: sbwml/actions@free-disk
       with:
@@ -62,70 +62,29 @@ jobs:
     - name: Install LLVM
       uses: sbwml/actions@install-llvm
 
-    - name: Restore ccache
-      if: matrix.tools == 'ccache'
-      uses: actions/cache@v4
-      with:
-        path: /builder/.ccache
-        key: ccache-${{ matrix.model }}-${{ matrix.libc }}-${{ matrix.tag.version }}-${{ github.run_id }}
-        restore-keys: |
-          ccache-${{ matrix.model }}-${{ matrix.libc }}-${{ matrix.tag.version }}-
-
     - name: Compile OpenWrt
       working-directory: /builder
       env:
         git_name: grandway2025
         git_password: ${{ secrets.CLONE_TOKEN }}
-        CCACHE_DIR: /builder/.ccache
-      run: |
-        set -euo pipefail
-        [ "${{ matrix.libc }}"  = "glibc"  ] && export ENABLE_GLIBC=y
-        [ "${{ matrix.tools }}" = "ccache" ] && export ENABLE_CCACHE=y
-        BUILD_SH_URL="https://raw.githubusercontent.com/grandway2025/Build/main/openwrt/build.sh"
-        curl -fsSL --retry 5 --retry-delay 3 "$BUILD_SH_URL" -o build.sh
-        chmod +x build.sh
-        bash -n build.sh
-        BUILD_TOOLCHAIN=y \
-        ENABLE_LTO=y \
-        ENABLE_BPF=y \\
-        USE_GCC15=y \
-        ENABLE_MOLD=y \
-        VERSION=main \
-        bash ./build.sh ${{ matrix.tag.type }} ${{ matrix.model }}
-
-    - name: Verify toolchain-cache output
-      id: verify
-      working-directory: /builder
       run: |
         set -e
-        OUT_DIR="openwrt/toolchain-cache"
-        if [ ! -d "$OUT_DIR" ]; then
-          echo "::error::toolchain-cache directory not found: $OUT_DIR"
-          ls -la openwrt/ || true
-          exit 1
-        fi
-        FILES=$(find "$OUT_DIR" -type f | wc -l)
-        if [ "$FILES" -eq 0 ]; then
-          echo "::error::toolchain-cache directory is empty"
-          exit 1
-        fi
-        echo "Found $FILES file(s) in $OUT_DIR:"
-        ls -lh "$OUT_DIR"
-        du -sh "$OUT_DIR"
-
-    - name: Upload build log on failure
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-log-${{ matrix.model }}-${{ matrix.libc }}-${{ matrix.tools }}
-        path: |
-          /builder/openwrt/logs/**
-          /builder/openwrt/.config
-        if-no-files-found: ignore
-        retention-days: 7
-
+        [ "${{ matrix.libc }}" = "glibc" ] && export ENABLE_GLIBC=y
+        [ "${{ matrix.tools }}" = "ccache" ] && export ENABLE_CCACHE=y
+        BUILD_SH_URL="https://raw.githubusercontent.com/grandway2025/Build/main/openwrt/build.sh"
+        curl -fsSL "$BUILD_SH_URL" -o build.sh
+        chmod +x build.sh
+        bash -n build.sh
+        BUILD_FAST=y \
+        BUILD_TOOLCHAIN=y \
+        ENABLE_BPF=y \
+        ENABLE_LTO=y \
+        ENABLE_MOLD=y \
+        GCC15=y \
+        VERSION=main \
+        bash ./build.sh ${{ matrix.tag.type }} ${{ matrix.model }}
+        
     - name: Create release
-      if: success()
       uses: ncipollo/release-action@v1.14.0
       with:
         name: ${{ matrix.tag.version }}
