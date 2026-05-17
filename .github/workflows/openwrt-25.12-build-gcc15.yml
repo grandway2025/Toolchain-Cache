@@ -66,7 +66,7 @@ jobs:
       working-directory: /builder
       env:
         git_name: grandway2025
-        git_password: ${{ secrets.GH_TOKEN }}
+        git_password: ${{ secrets.CLONE_TOKEN }}
       run: |
         set -e
         [ "${{ matrix.libc }}" = "glibc" ] && export ENABLE_GLIBC=y
