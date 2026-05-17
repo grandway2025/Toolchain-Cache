@@ -1,4 +1,4 @@
-name: openwrt-25.12-gcc15
+name: openwrt-25.12-gcc15-Private
 
 on: workflow_dispatch
 
