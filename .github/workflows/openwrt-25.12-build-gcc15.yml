@@ -70,7 +70,7 @@ jobs:
         git_password: ${{ secrets.CLONE_TOKEN }}
         GH_TOKEN: ${{ secrets.CLONE_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.CLONE_TOKEN }}
-        OPENWRT_RELEASE: ${{ matrix.tag.release }
+        OPENWRT_RELEASE: ${{ matrix.tag.release }}
       run: |
         set -e
         [ "${{ matrix.libc }}" = "glibc" ] && export ENABLE_GLIBC=y
