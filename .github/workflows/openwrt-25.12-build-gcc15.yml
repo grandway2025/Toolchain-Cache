@@ -23,8 +23,9 @@ jobs:
           # - netgear_r8500
           # - redmi_ax6000
         tag:
-          - type: dev
+          - type: rc2
             version: openwrt-25.12
+            release: v25.12.0-rc1   # ← 想锁哪个 tag 写哪个，留空则走 mirror 查询
         libc:
           - musl
         tools:
@@ -67,6 +68,9 @@ jobs:
       env:
         git_name: grandway2025
         git_password: ${{ secrets.CLONE_TOKEN }}
+        GH_TOKEN: ${{ secrets.CLONE_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.CLONE_TOKEN }}
+        OPENWRT_RELEASE: ${{ matrix.tag.release }
       run: |
         set -e
         [ "${{ matrix.libc }}" = "glibc" ] && export ENABLE_GLIBC=y
@@ -76,8 +80,6 @@ jobs:
           -H "Accept: application/vnd.github.raw" \
           "https://api.github.com/repos/grandway2025/Build/contents/openwrt/build.sh?ref=main" \
           -o build.sh
-        file build.sh
-        head -1 build.sh
         chmod +x build.sh
         bash -n build.sh
         BUILD_TOOLCHAIN=y \
