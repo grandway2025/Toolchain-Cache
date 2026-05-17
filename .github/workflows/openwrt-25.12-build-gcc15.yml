@@ -23,7 +23,7 @@ jobs:
           # - netgear_r8500
           # - redmi_ax6000
         tag:
-          - type: dev
+          - type: rc2
             version: openwrt-25.12
         libc:
           - musl
@@ -75,12 +75,11 @@ jobs:
         curl -fsSL "$BUILD_SH_URL" -o build.sh
         chmod +x build.sh
         bash -n build.sh
-        BUILD_FAST=y \
         BUILD_TOOLCHAIN=y \
-        ENABLE_BPF=y \
         ENABLE_LTO=y \
+        ENABLE_BPF=y \
+        USE_GCC15=y \
         ENABLE_MOLD=y \
-        GCC15=y \
         VERSION=main \
         bash ./build.sh ${{ matrix.tag.type }} ${{ matrix.model }}
         
