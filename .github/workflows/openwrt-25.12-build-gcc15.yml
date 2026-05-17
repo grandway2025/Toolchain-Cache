@@ -71,8 +71,11 @@ jobs:
         set -e
         [ "${{ matrix.libc }}" = "glibc" ] && export ENABLE_GLIBC=y
         [ "${{ matrix.tools }}" = "ccache" ] && export ENABLE_CCACHE=y
-        BUILD_SH_URL="https://raw.githubusercontent.com/grandway2025/Build/main/openwrt/build.sh"
-        curl -fsSL "$BUILD_SH_URL" -o build.sh
+        curl -fsSL \
+          -H "Authorization: Bearer ${{ secrets.CLONE_TOKEN }}" \
+          -H "Accept: application/vnd.github.raw" \
+          "https://api.github.com/repos/grandway2025/Build/contents/openwrt/build.sh?ref=main" \
+          -o build.sh
         chmod +x build.sh
         bash -n build.sh
         BUILD_TOOLCHAIN=y \
