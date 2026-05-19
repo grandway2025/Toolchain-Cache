@@ -18,6 +18,7 @@ jobs:
         tag:
           - type: rc2
             version: openwrt-25.12
+            release: v25.12.4
         libc:
           - musl
         tools:
