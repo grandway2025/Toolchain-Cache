@@ -60,8 +60,8 @@ jobs:
     - name: Compile Toolchain
       working-directory: /builder
       env:
-        git_name: private
-        git_password: ${{ secrets.git_password }}
+        git_name: grandway2025
+        git_password: ${{ secrets.CLONE_TOKEN }}
       run: |
         [ "${{ matrix.libc }}" = "glibc" ] && export ENABLE_GLIBC=y
         [ "${{ matrix.tools }}" = "ccache" ] && export ENABLE_CCACHE=y
