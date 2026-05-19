@@ -25,7 +25,7 @@ jobs:
         tag:
           - type: rc2
             version: openwrt-25.12
-            release:    # ← 想锁哪个 tag 写哪个，留空则走 mirror 查询
+            release: v25.12.4    # ← 想锁哪个 tag 写哪个，留空则走 mirror 查询
         libc:
           - musl
         tools:
@@ -68,6 +68,7 @@ jobs:
       env:
         git_name: grandway2025
         git_password: ${{ secrets.CLONE_TOKEN }}
+        OPENWRT_RELEASE: ${{ matrix.tag.release }}
       run: |
         set -e
         [ "${{ matrix.libc }}" = "glibc" ] && export ENABLE_GLIBC=y
