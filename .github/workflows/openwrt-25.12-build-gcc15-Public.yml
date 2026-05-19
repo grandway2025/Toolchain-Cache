@@ -25,6 +25,7 @@ jobs:
         tag:
           - type: rc2
             version: openwrt-25.12
+            release:    # ← 想锁哪个 tag 写哪个，留空则走 mirror 查询
         libc:
           - musl
         tools:
