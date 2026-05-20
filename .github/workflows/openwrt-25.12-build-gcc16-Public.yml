@@ -67,7 +67,11 @@ jobs:
       run: |
         [ "${{ matrix.libc }}" = "glibc" ] && export ENABLE_GLIBC=y
         [ "${{ matrix.tools }}" = "ccache" ] && export ENABLE_CCACHE=y
-        BUILD_TOOLCHAIN=y ENABLE_LTO=y ENABLE_BPF=y USE_GCC16=y ENABLE_MOLD=y 
+        export BUILD_TOOLCHAIN=y
+        export ENABLE_LTO=y
+        export ENABLE_BPF=y
+        export USE_GCC16=y
+        export ENABLE_MOLD=y
         BUILD_SH_URL="https://raw.githubusercontent.com/grandway2025/Build/main/openwrt/build.sh"
         curl -fsSL "$BUILD_SH_URL" -o build.sh
         chmod +x build.sh
