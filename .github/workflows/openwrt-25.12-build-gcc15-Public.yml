@@ -63,7 +63,6 @@ jobs:
       env:
         git_name: grandway2025
         git_password: ${{ secrets.CLONE_TOKEN }}
-        OPENWRT_RELEASE: ${{ matrix.tag.release }}
       run: |
         [ "${{ matrix.libc }}" = "glibc" ] && export ENABLE_GLIBC=y || true
         [ "${{ matrix.tools }}" = "ccache" ] && export ENABLE_CCACHE=y || true
