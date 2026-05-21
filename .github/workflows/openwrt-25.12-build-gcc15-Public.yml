@@ -78,7 +78,6 @@ jobs:
         name: ${{ matrix.tag.version }}
         allowUpdates: true
         tag: ${{ matrix.tag.version }}
-        commit: openwrt-25.12
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.WORKDIR }}/openwrt/toolchain-cache/*
