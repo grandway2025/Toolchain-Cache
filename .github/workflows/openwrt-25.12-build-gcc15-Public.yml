@@ -78,6 +78,7 @@ jobs:
         name: ${{ matrix.tag.version }}
         allowUpdates: true
         tag: ${{ matrix.tag.version }}
+        commit: ${{ github.ref_name }}
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.WORKDIR }}/openwrt/toolchain-cache/*
